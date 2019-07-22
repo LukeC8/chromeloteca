@@ -92,9 +92,10 @@ function populate(classSupported) {
     //====================================
     // step 0 - check if is in a bet page
     //====================================
+
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 
-        Object.keys(classSupported).some((v, idx) => {
+        let inBetPage = Object.keys(classSupported).some((v, idx) => {
 
             console.log('urlEndsWith', v, '?', tabs[0].url.endsWith(v));
 
@@ -111,7 +112,20 @@ function populate(classSupported) {
 
             return false;
         });
+        
+        //
+        // disable all buttons if it is not a bet page
+        //
+        if (!inBetPage) {
+
+            let btns = document.getElementsByTagName("button");
+
+            for(let i = 0; i < btns.length; ++i)
+                btns[i].disabled = true;
+        }
     });
+
+
 
     //=========================
     // step 1 -
