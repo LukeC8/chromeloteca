@@ -3,7 +3,7 @@
     "name": "Apostas Automaticas - Loterias Caixa",
     "version": "1.0",
     "description": "Extensão para inserir jogos automaticamente no site da Caixa",
-    "permissions": ["declarativeContent"],
+    "permissions": ["declarativeContent", "tabs"],
     "background": {
         "scripts": ["scripts/background.js"]
     },

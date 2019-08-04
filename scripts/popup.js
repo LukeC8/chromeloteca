@@ -75,7 +75,7 @@ class GameType {
 };
 
 let btnProcess = document.getElementById("btnProcess");
-let changeColor = document.getElementById("changeColor");
+let btnApostar = document.getElementById("changeColor");
 let btnLimpaTbJogos = document.getElementById("limpartbjogos");
 let betSet = new Set(); //to check repeated bets
 
@@ -88,25 +88,33 @@ populate(GameType);
  * Populate some elements on popup.html
  */
 function populate(classSupported) {
-    //============================
-    // step 1 - supported games
-    //============================
     
-    let selectElt = document.getElementById("jogoslist");
-    
-    console.log(Object.keys(GameType)[selectElt.selectedIndex]);
+    //====================================
+    // step 0 - check if is in a bet page
+    //====================================
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 
-    Object.keys(classSupported).forEach((v, i) => {
-        let opt = document.createElement('option');
-        
-        opt.value = v;
-        opt.innerHTML = v;
+        Object.keys(classSupported).some((v, idx) => {
 
-        selectElt.add(opt);
+            console.log('urlEndsWith', v, '?', tabs[0].url.endsWith(v));
+
+            if (tabs[0].url.endsWith(v)) {
+                let selectElt = document.getElementById("jogoslist");
+                let opt = document.createElement('option');
+
+                opt.value = v; opt.name = v;
+                opt.innerHTML = v;
+                selectElt.add(opt);
+
+                return true;
+            }
+
+            return false;
+        });
     });
 
     //=========================
-    // step 2 -
+    // step 1 -
     //=========================
 }
 
@@ -125,7 +133,7 @@ btnLimpaTbJogos.onclick = (element) => {
     warnInfoElt.value = '';
 }
 
-changeColor.onclick = (element) => {
+btnApostar.onclick = (element) => {
     let textArea = document.getElementById('jogostext');
 
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -171,7 +179,7 @@ btnProcess.onclick = (element) => {
     let warnInfoElt = document.getElementById('warntext');
     
     let arr = textAreaProcess(textAreaElt.value);
-    
+
     arr.forEach((v, idx) => {
         
         if (v.length === 0) {
@@ -180,14 +188,11 @@ btnProcess.onclick = (element) => {
         }
         
         let rptText = '';
-        let betType = GameType[Object.keys(GameType)[selectElt.selectedIndex]];
+        let betType = GameType[selectElt.selectedOptions[0].value];
         let bet = new Bet(v, betType);
         let betStr = v.toString();
         let betStatus = bet.check() | (betSet.has(betStr) << 2);
 
-        console.log(betStr, 'status:', betStatus,
-            bet.numbers);
-        
         let rowInfo = {
             col1: tableElt.childNodes.length+1,
             col2: betStr,
