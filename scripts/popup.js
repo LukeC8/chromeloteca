@@ -54,11 +54,13 @@ class GameType {
     };
 
     static lotofacil = {
+        caption: "lotofacil/especial",
         subTypes: [15,16,17,18],
         span: 25
     };
 
     static megasena = {
+        caption: "mega-sena",
         subTypes: [6,7,8,9,10,11,12,13,14,15],
         span: 60
     };
@@ -68,9 +70,27 @@ class GameType {
         span: 80
     };
 
+    /*
+     * TODO
     static timemania = {
         subTypes: [10],
         span: 80
+    };
+    */
+
+    /*
+     * TODO
+    static diadesorte = {
+        caption: "dia-de-sorte",
+        subTypes: [7,8,9,10,11,12,13,14,15],
+        span: 31
+    };
+    */
+
+    static duplasena = {
+        caption: "dupla-sena",
+        subTypes: [6,7,8,9,10,11,12,13,14,15],
+        span: 50
     };
 };
 
@@ -97,9 +117,10 @@ function populate(classSupported) {
 
         let inBetPage = Object.keys(classSupported).some((v, idx) => {
 
-            console.log('urlEndsWith', v, '?', tabs[0].url.endsWith(v));
+            let caption = classSupported[v].caption ? classSupported[v].caption : ' ';
+            let url = tabs[0].url;
 
-            if (tabs[0].url.endsWith(v)) {
+            if (url.endsWith(v) || url.endsWith(caption)) {
                 let selectElt = document.getElementById("jogoslist");
                 let opt = document.createElement('option');
 
