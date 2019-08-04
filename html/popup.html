@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html>
+    <!--
+        /*
+         * Created by: lucas[dot]correa[at]gmx[dot]com - 19/07/2019
+        */
+    -->
+    <head>
+        <meta charset="UTF-8">
+        <style>
+        </style>
+    </head>
+    <body>
+        <center> <h4>Textinho</h4> </center>
+        <table align="center" width="500px" height="100%">
+            <tr>
+                <td style="text-align:center">
+                    <label>Tipo do Sorteio:
+                        <select name="tipoJogo" id='jogoslist'>
+                            <!-- Populated on startup
+                                <option value="A">optA</option>
+                                <option value="B">optB</option>
+                                <option value="C">optC</option>
+                                <option value="D">optD</option>
+                            -->
+                        </select>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:center">
+                    <textarea id="jogostext" style="width:100%; height:70px;resize:none;" placeholder="Cole seus jogos aqui..."></textarea>
+                </td>
+            </tr>
+            <!-- 
+            <tr>
+                <td style="text-align:right">
+                    <input type="file" id="jogostxt" name="jogos">
+                </td>
+            </tr>
+            -->
+            <tr>
+                <td style="text-align:center">
+                    <button type="button" id="btnProcess">Inserir Jogos</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="overflow:auto;height:200px;width:100%;" id="jogos">
+                        <fieldset >
+                            <legend>Meus Jogos </legend>
+                            <table id="tbjogos" align="center" width="100%" border='1px'>
+                                <thead>
+                                <tr id="tbJogsHd">
+                                    <th width="5%">Nº</th>
+                                    <th width="90%">Jogo</th>
+                                    <th width="5%">Status</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tbjogosbdy"></tbody>
+                            </table>
+                        </fieldset>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Informações:
+                        <textarea style="overflow:auto;height:50px;width:100%;resize:none;" readonly id='warntext'></textarea>
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right">
+                    <button id="limpartbjogos">Limpar</button>
+                    <button id="changeColor">Apostar</button>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <p>Legenda:</p>
+            <ul>
+                <li><img src="../img/delete.png"/> - Jogo Incorreto</li>
+                <li><img src="../img/checked.png"/> - Jogo Completo</li>
+            </ul>
+        </div>
+        <script src="../scripts/popup.js"></script>
+        <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/"                 title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"                 title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        <div>Icons made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> from <a href="https://www.flaticon.com/"                 title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"                 title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/"                 title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"                 title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        <div>Icons made by <a href="https://www.flaticon.com/authors/maxim-basinski" title="Maxim Basinski">Maxim Basinski</a> from <a href="https://www.flaticon.com/"                 title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"                 title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+    </body>
+</html>

@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Apostas Automaticas - Loterias Caixa",
+    "version": "1.0",
+    "description": "Extensão para inserir jogos automaticamente no site da Caixa",
+    "permissions": ["declarativeContent"],
+    "background": {
+        "scripts": ["scripts/background.js"]
+    },
+    "page_action": {
+        "default_popup": "html/popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://*.loteriasonline.caixa.gov.br/*"],
+            "js": ["scripts/content.js"]
+        }
+    ],
+    "web_accessible_resources": ["scripts/inject.js"]
+}
