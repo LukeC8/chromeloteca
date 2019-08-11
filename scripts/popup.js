@@ -15,6 +15,10 @@ class Bet {
     constructor(arr, gameProp) {
         this.numbers = [...new Set(arr)];
         this.gameProp = gameProp;
+
+        this.numbers.sort((a,b) => {
+            return a - b;
+        });
     }
 
     check(arr = this.numbers, gameProp = this.gameProp) {
@@ -41,10 +45,30 @@ class Bet {
         });
     }
 
-    isGoldenBet(arr = this.numbers, gameProp = this.gameProp) {
-        return this.checkLen(arr, gameProp) && arr.length > gameProp.subTypes[0];
+    toString() {
+        return this.numbers.toString();
     }
 };
+
+class Bet2 extends Bet {
+
+    constructor(arr, gameProp) {
+        super(arr.slice(0,-1), gameProp);
+        this.bet2 = arr[arr.length-1];
+    }
+
+    checkItens(arr = this.numbers, gameProp = this.gameProp) {
+        let oknumbers = super.checkItens(arr, gameProp);
+        let okspan2 = this.bet2 >= 1 && this.bet2 <= gameProp.span2;
+
+        return oknumbers && !okspan2;
+    }
+
+    toString() {
+       return `${super.toString()},${this.bet2}`;
+    }
+};
+
 
 class GameType {
 
@@ -70,28 +94,42 @@ class GameType {
         span: 80
     };
 
-    /*
-     * TODO
     static timemania = {
         subTypes: [10],
-        span: 80
+        span: 80,
+        span2: 80
     };
-    */
 
-    /*
-     * TODO
     static diadesorte = {
         caption: "dia-de-sorte",
         subTypes: [7,8,9,10,11,12,13,14,15],
-        span: 31
+        span: 31,
+        span2: 12
     };
-    */
 
     static duplasena = {
         caption: "dupla-sena",
         subTypes: [6,7,8,9,10,11,12,13,14,15],
         span: 50
     };
+
+    /*
+     * TODO:
+    static loteca = {
+    };
+    */
+};
+
+class BetFactory {
+    static create(arr, type) {
+        switch(type) {
+            case 'diadesorte':
+            case 'timemania':
+                return new Bet2(arr, GameType[type]);
+            default:
+                return new Bet(arr, GameType[type]);
+        }
+    }
 };
 
 let btnProcess = document.getElementById("btnProcess");
@@ -146,8 +184,6 @@ function populate(classSupported) {
         }
     });
 
-
-
     //=========================
     // step 1 -
     //=========================
@@ -170,10 +206,17 @@ btnLimpaTbJogos.onclick = (element) => {
 
 btnApostar.onclick = (element) => {
     let textArea = document.getElementById('jogostext');
+    let selectElt = document.getElementById('jogoslist');
 
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         
-        chrome.tabs.sendMessage(tabs[0].id, new Array(...betSet));
+        let betType = selectElt.selectedOptions[0].value;
+        let message = {
+            type: betType,
+            apostas: new Array(...betSet)
+        };
+
+        chrome.tabs.sendMessage(tabs[0].id, message);
 
         betSet.clear();
     });
@@ -196,7 +239,6 @@ function textAreaProcess(text, sep=',') {
         });
 
         if (jogo.length) {
-            jogo.sort();
             arr.push(jogo);
         }
     });
@@ -221,11 +263,11 @@ btnProcess.onclick = (element) => {
             console.log('nulll');
             return;
         }
-        
+
         let rptText = '';
-        let betType = GameType[selectElt.selectedOptions[0].value];
-        let bet = new Bet(v, betType);
-        let betStr = v.toString();
+        let betType = selectElt.selectedOptions[0].value;
+        let bet = BetFactory.create(v, betType);
+        let betStr = bet.toString();
         let betStatus = bet.check() | (betSet.has(betStr) << 2);
 
         let rowInfo = {
