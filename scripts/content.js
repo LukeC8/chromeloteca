@@ -1,6 +1,6 @@
 /*
- * The inject.js script needs to be loaded into the page to to have access to the angular enviroment. The content script so inserts inject.js script inside loaded page and remove  the script from the page after load the message listener.
- *
+ * The content script inserts inject.js inside of the loaded page and remove the element 'script' from the page after load the message listener.
+ * The inject.js script needs to be loaded into the page to have access to the angular enviroment.
  *
  */
 let s = document.createElement('script');
@@ -14,9 +14,24 @@ document.head.appendChild(s);
 
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
-
-        document.dispatchEvent(new CustomEvent('chrome_loteca_apostas', {'detail': message}));
     
+        let current = JSON.parse(localStorage.getItem('ngStorage-apostasIncluidas'));
+        let y = current.length + message.apostas.length;
+        let check = setInterval(() => {
+
+            let apostas = JSON.parse(localStorage.getItem('ngStorage-apostasIncluidas'));
+            let x = apostas.length;
+            let ratio = x / y;
+            
+            chrome.runtime.sendMessage(message=ratio.toString());
+
+            if (x === y) {
+                clearInterval(check);
+            }
+
+        }, 100);
+        
+        document.dispatchEvent(new CustomEvent('chrome_loteca_apostas', {'detail': message}));
     }
 );
 

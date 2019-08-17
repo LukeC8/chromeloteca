@@ -2,16 +2,22 @@
     "manifest_version": 2,
     "author": "LukeC8",
     "name": "ChromeLoteca - Loterias Caixa",
-    "version": "1.0",
+    "version": "1.0.1",
     "icons": {
         "16": "img/gambler.png",
         "32": "img/gambler32.png",
         "128": "img/gambler128.png"
     },
     "description": "Extensão para fazer várias apostas automaticamente no site das loterias da Caixa",
-    "permissions": ["declarativeContent", "tabs"],
+    "permissions": [
+        "declarativeContent",
+        "tabs",
+        "storage"
+    ],
     "background": {
-        "scripts": ["scripts/background.js"]
+        "scripts": [
+            "scripts/background.js"
+        ]
     },
     "page_action": {
         "default_icon":{

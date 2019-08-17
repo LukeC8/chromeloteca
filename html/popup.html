@@ -9,7 +9,21 @@
     <head>
         <meta charset="UTF-8">
         <style>
-        </style>
+            #myProgress {
+                visibility: hidden;
+                width: 100%;
+                background-color: #ddd;
+            }
+
+            #myBar {
+                width: 0%;
+                height: 30px;
+                background-color: #4CAF50;
+                text-align: center;
+                line-height: 30px;
+                color: white;
+            }
+        </style> 
     </head>
     <body>
         <center> 
@@ -75,9 +89,16 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <div id="myProgress">
+                        <div id="myBar"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
                 <td style="text-align:right">
                     <button id="limpartbjogos">Limpar</button>
-                    <button id="changeColor">Apostar</button>
+                    <button id="apostar">Apostar</button>
                 </td>
             </tr>
         </table>

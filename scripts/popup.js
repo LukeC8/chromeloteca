@@ -133,7 +133,7 @@ class BetFactory {
 };
 
 let btnProcess = document.getElementById("btnProcess");
-let btnApostar = document.getElementById("changeColor");
+let btnApostar = document.getElementById("apostar");
 let btnLimpaTbJogos = document.getElementById("limpartbjogos");
 let betSet = new Set(); //to check repeated bets
 
@@ -189,39 +189,6 @@ function populate(classSupported) {
     //=========================
 }
 
-btnLimpaTbJogos.onclick = (element) => {
-    let tableBdyElt = document.getElementById("tbjogosbdy");
-    let warnInfoElt = document.getElementById("warntext");
-
-    let child = tableBdyElt.firstChild;
-    
-    while (child) {
-        tableBdyElt.removeChild(child);
-        child = tableBdyElt.firstChild;
-    }
-
-    betSet.clear();
-    warnInfoElt.value = '';
-}
-
-btnApostar.onclick = (element) => {
-    let textArea = document.getElementById('jogostext');
-    let selectElt = document.getElementById('jogoslist');
-
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        
-        let betType = selectElt.selectedOptions[0].value;
-        let message = {
-            type: betType,
-            apostas: new Array(...betSet)
-        };
-
-        chrome.tabs.sendMessage(tabs[0].id, message);
-
-        betSet.clear();
-    });
-};
-
 /*
  * Transform Text Area data into array of array
  */
@@ -246,6 +213,49 @@ function textAreaProcess(text, sep=',') {
     return arr;
 }
 
+/* createRow - Add new row to the table
+ *
+ * rowInfo
+ *  col1: counter
+ *  col2: bet
+ *  col3: bet status
+ */
+function createRow(rowInfo) {
+    
+    function createImgElement(src) {
+        let img = document.createElement("img");
+        img.src = src;
+        return img;
+    }
+
+    function addCol(info, row) {
+        let newCell = document.createElement("td");
+
+        newCell.style = "text-align:center";
+        newCell.appendChild(info);
+        row.appendChild(newCell);
+    }
+
+    let newRowElement = document.createElement("tr");
+
+    //col 1 is the counter
+    let col1 = document.createElement("p");
+    col1.innerHTML = rowInfo.col1;
+
+    //col 2 is the bet
+    let col2 = document.createElement("p");
+    col2.innerHTML = rowInfo.col2;
+
+    //col 3 is the bet status (valid or not);
+    let src = rowInfo.col3 ? 'checked' : 'delete';
+    let col3 = createImgElement(`../img/${src}.png`);
+
+    [col1, col2, col3].forEach((col) => {
+        addCol(col, newRowElement);
+    });
+
+    return newRowElement;
+}
 
 btnProcess.onclick = (element) => {
     
@@ -299,48 +309,56 @@ btnProcess.onclick = (element) => {
     textAreaElt.value = '';
 };
 
+btnApostar.onclick = (element) => {
+    let progress = document.getElementById("myProgress");
+    let textArea = document.getElementById('jogostext');
+    let selectElt = document.getElementById('jogoslist');
 
-/* createRow - Add new row to the table
- *
- * rowInfo
- *  col1: counter
- *  col2: bet
- *  col3: bet status
- */
-function createRow(rowInfo) {
-    
-    function createImgElement(src) {
-        let img = document.createElement("img");
-        img.src = src;
-        return img;
-    }
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        
+        let betType = selectElt.selectedOptions[0].value;
+        let message = {
+            type: betType,
+            apostas: new Array(...betSet)
+        };
 
-    function addCol(info, row) {
-        let newCell = document.createElement("td");
+        chrome.tabs.sendMessage(tabs[0].id, message);
 
-        newCell.style = "text-align:center";
-        newCell.appendChild(info);
-        row.appendChild(newCell);
-    }
-
-    let newRowElement = document.createElement("tr");
-
-    //col 1 is the counter
-    let col1 = document.createElement("p");
-    col1.innerHTML = rowInfo.col1;
-
-    //col 2 is the bet
-    let col2 = document.createElement("p");
-    col2.innerHTML = rowInfo.col2;
-
-    //col 3 is the bet status (valid or not);
-    let src = rowInfo.col3 ? 'checked' : 'delete';
-    let col3 = createImgElement(`../img/${src}.png`);
-
-    [col1, col2, col3].forEach((col) => {
-        addCol(col, newRowElement);
+        betSet.clear();
+        btnApostar.disabled = true;
+        progress.style.visibility = "visible";
     });
+};
 
-    return newRowElement;
+btnLimpaTbJogos.onclick = (element) => {
+    let tableBdyElt = document.getElementById("tbjogosbdy");
+    let warnInfoElt = document.getElementById("warntext");
+
+    let child = tableBdyElt.firstChild;
+    
+    while (child) {
+        tableBdyElt.removeChild(child);
+        child = tableBdyElt.firstChild;
+    }
+
+    betSet.clear();
+    warnInfoElt.value = '';
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    let progress = document.getElementById("myProgress");
+    let bar = document.getElementById("myBar");
+    let ratio = parseFloat(message) * 100.0;
+
+    bar.style.width = ratio + '%';
+    bar.innerHTML = parseInt(ratio) + '%';
+
+    if (ratio == 100) {
+        setTimeout(() => {
+            btnApostar.disabled = false;
+            progress.style.visibility = "hidden";
+        }, 1500);
+    }
+
+});
 
