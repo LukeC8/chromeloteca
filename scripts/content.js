@@ -3,6 +3,13 @@
  * The inject.js script needs to be loaded into the page to have access to the angular enviroment.
  *
  */
+
+function getApostas(item='ngStorage-apostasIncluidas') {
+    let apostas = localStorage.getItem(item);
+
+    return JSON.parse(apostas ? apostas : "[]");
+}
+
 let s = document.createElement('script');
 
 s.src = chrome.extension.getURL('scripts/inject.js');
@@ -15,11 +22,11 @@ document.head.appendChild(s);
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
     
-        let current = JSON.parse(localStorage.getItem('ngStorage-apostasIncluidas'));
+        let current = getApostas();
         let y = current.length + message.apostas.length;
         let check = setInterval(() => {
 
-            let apostas = JSON.parse(localStorage.getItem('ngStorage-apostasIncluidas'));
+            let apostas = getApostas();
             let x = apostas.length;
             let ratio = x / y;
             
