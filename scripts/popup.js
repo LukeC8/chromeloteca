@@ -8,12 +8,12 @@ class Bet {
 
     //The Bet has different quantity of numbers for the GameType
     static STATUS_LEN_ERROR = 1;
-    
+
     //Some number in Bet has wrong value
     static STATUS_ITENS_ERROR = 2;
 
     constructor(arr, gameProp) {
-        this.numbers = [...new Set(arr)];
+        this.numbers = [...new Set(arr)].map( (i) => { return i%100; } );
         this.gameProp = gameProp;
 
         this.numbers.sort((a,b) => {
@@ -41,7 +41,13 @@ class Bet {
 
     checkItens(arr = this.numbers, gameProp = this.gameProp) {
         return arr.some((item, idx) => {
-            return (item <= 0 || gameProp.span < item);
+
+            //
+            //lotomania item can be 0
+            //
+            let minimal = 0 - (gameProp.caption && gameProp.caption.endsWith('lotomania'));
+
+            return (item <= minimal || gameProp.span < item);
         });
     }
 
@@ -61,7 +67,7 @@ class Bet2 extends Bet {
         let oknumbers = super.checkItens(arr, gameProp);
         let okspan2 = this.bet2 >= 1 && this.bet2 <= gameProp.span2;
 
-        return oknumbers && !okspan2;
+        return oknumbers || !okspan2;
     }
 
     toString() {
@@ -73,6 +79,7 @@ class Bet2 extends Bet {
 class GameType {
 
     static lotomania = {
+        caption: "lotomania",
         subTypes: [50],
         span: 100
     };
