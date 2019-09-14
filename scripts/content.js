@@ -4,12 +4,6 @@
  *
  */
 
-function getApostas(item='ngStorage-apostasIncluidas') {
-    let apostas = localStorage.getItem(item);
-
-    return JSON.parse(apostas ? apostas : "[]");
-}
-
 let s = document.createElement('script');
 
 s.src = chrome.extension.getURL('scripts/inject.js');
@@ -19,26 +13,28 @@ s.onload = () => {
 
 document.head.appendChild(s);
 
+/*
+ * 1. Receive Data from popup.js
+ * 2. Send Data to inject.js
+ */
 chrome.runtime.onMessage.addListener(
     (message, sender, sendResponse) => {
-    
-        let current = getApostas();
-        let y = current.length + message.apostas.length;
-        let check = setInterval(() => {
-
-            let apostas = getApostas();
-            let x = apostas.length;
-            let ratio = x / y;
-            
-            chrome.runtime.sendMessage(message=ratio.toString());
-
-            if (x === y) {
-                clearInterval(check);
-            }
-
-        }, 100);
         
-        document.dispatchEvent(new CustomEvent('chrome_loteca_apostas', {'detail': message}));
+        // send data to inject.js
+        document.dispatchEvent(
+            new CustomEvent(
+                'chrome_loteca_apostas',
+                {'detail': message}
+            )
+        );
     }
 );
+
+/*
+ * 1. Receive Progress Bar updates from inject.js
+ * 2. Send Progress Bar updates to popup.js
+ */
+document.addEventListener('chrome_loteca_apostas_progress_bar', (ev) => {
+    chrome.runtime.sendMessage(message=ev.detail);
+});
 

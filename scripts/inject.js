@@ -14,21 +14,42 @@ function apostar(arr) {
 function bet2(item, id) {
 
     let carrossel = angular.element(
-        document.getElementById(`carrossel_${id}`))
+        document.getElementById(`carrossel_${id}`)
+    );
 
     carrossel.children()[0].children[item-1].click();
 }
 
+/*
+ * Send Progress Bar updates and execute callback
+ */
 function pushApostas(v, callback) {
+    let y = v.length;
+
     let check = setInterval(() => {
+
+        // send the progress bar information
+        let ratio = 1.0 - v.length/y;
+
+        document.dispatchEvent(
+            new CustomEvent(
+                'chrome_loteca_apostas_progress_bar',
+                {'detail': ratio.toString()}
+            )
+        );
+
         if (v.length) {
             callback(v.shift());
         } else {
             clearInterval(check);
         }
-    }, 250);
+
+    }, 150);
 }
 
+/*
+ * Receive data from content.js and process
+ */
 document.addEventListener('chrome_loteca_apostas', (ev) => {
 
     switch (ev.detail.type) {

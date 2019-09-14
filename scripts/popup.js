@@ -352,6 +352,10 @@ btnLimpaTbJogos.onclick = (element) => {
     warnInfoElt.value = '';
 }
 
+/*
+ * 1. Receive progress bar updates from content.js
+ * 2. Update progress bar
+ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     let progress = document.getElementById("myProgress");
     let bar = document.getElementById("myBar");
@@ -366,6 +370,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             progress.style.visibility = "hidden";
         }, 1500);
     }
-
 });
 
