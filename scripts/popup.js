@@ -339,6 +339,9 @@ btnApostar.onclick = (element) => {
     let textArea = document.getElementById('jogostext');
     let selectElt = document.getElementById('jogoslist');
 
+    if(betSet.size === 0)
+        return;
+
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         
         let betType = selectElt.selectedOptions[0].value;
