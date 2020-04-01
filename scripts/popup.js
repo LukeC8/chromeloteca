@@ -139,9 +139,11 @@ class BetFactory {
     }
 };
 
+const sepSupported = ",;\-";
 let btnProcess = document.getElementById("btnProcess");
 let btnApostar = document.getElementById("apostar");
 let btnLimpaTbJogos = document.getElementById("limpartbjogos");
+let texAreaElt = document.getElementById("jogostext");
 let betSet = new Set(); //to check repeated bets
 
 //
@@ -205,7 +207,7 @@ function textAreaProcess(text, sep=',') {
     text.trim().split('\n').forEach((v) => {
         let jogo = [];
         
-        v.trim().split(',').forEach((j) => {
+        v.trim().split(sep).forEach((j) => {
             let num = parseInt(j.trim());
             
             if (!isNaN(num))
@@ -264,6 +266,19 @@ function createRow(rowInfo) {
     return newRowElement;
 }
 
+/*
+ * Choose the separator character automatically from the text
+ */
+texAreaElt.oninput = (element) => {
+    const separator = document.getElementById('tbSeparator');
+    const txt = element.target.value.trim();
+    const choose = txt.search(RegExp(`[${sepSupported}]`));
+    const chooseChar = choose > -1 ? txt[choose] : ' ';
+
+    separator.value = chooseChar;
+    separator.hidden = false;
+}
+
 btnProcess.onclick = (element) => {
     
     let tableElt = document.getElementById("tbjogosbdy");
@@ -271,8 +286,10 @@ btnProcess.onclick = (element) => {
     let divElt = document.getElementById("jogos");
     let textAreaElt = document.getElementById('jogostext');
     let warnInfoElt = document.getElementById('warntext');
-    
-    let arr = textAreaProcess(textAreaElt.value);
+    let separator = document.getElementById('tbSeparator');
+
+    let sep = separator.options[separator.selectedIndex].value;
+    let arr = textAreaProcess(textAreaElt.value, sep);
 
     arr.forEach((v, idx) => {
         
@@ -314,6 +331,7 @@ btnProcess.onclick = (element) => {
 
     //after insert, reset textArea
     textAreaElt.value = '';
+    separator.hidden = true;
 };
 
 btnApostar.onclick = (element) => {

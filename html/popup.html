@@ -47,7 +47,21 @@
             </tr>
             <tr>
                 <td style="text-align:center">
-                    <textarea id="jogostext" style="width:100%; height:70px;resize:none;" placeholder="Cole seus jogos aqui..."></textarea>
+                    <textarea id="jogostext"
+                              style="width:100%; height:70px;resize:none;"
+                              placeholder="Cole seus jogos aqui..."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right;">
+                    <label>Separador de Dezenas (detecção automática):
+                        <select id="tbSeparator" name="separator" hidden disabled>
+                            <option value=" " selected> Espaço </option>
+                            <option value=","> Vírgula </option>
+                            <option value=";"> Ponto e Vírgula </option>
+                            <option value="-"> Traço </option>
+                        </select>
+                    </label>
                 </td>
             </tr>
             <!-- 
