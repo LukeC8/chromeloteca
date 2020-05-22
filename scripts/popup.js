@@ -187,9 +187,25 @@ function populate(classSupported) {
         if (!inBetPage) {
 
             let btns = document.getElementsByTagName("button");
+            let warnText = document.getElementById("warntext");
 
             for(let i = 0; i < btns.length; ++i)
                 btns[i].disabled = true;
+
+            /* Issue #4 
+             * Show urls supported to user, when url passed is unknown
+             */
+            for(let i = 0; i < tabs.length; ++i)
+                warnText.value += 'Url não suportada:\n' + tabs[i].url;
+            
+            warnText.value += "\n\nURLs suportadas:\n";
+            
+            Object.keys(classSupported).forEach((item) => {
+                let urlbase = "https://www.loteriasonline.caixa.gov.br/silce-web/#/";
+                let gamename = classSupported[item].caption ? classSupported[item].caption : item;
+                
+                warnText.value += '\n\n' + urlbase + gamename;
+            });
         }
     });
 
