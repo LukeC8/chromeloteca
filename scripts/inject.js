@@ -1,3 +1,5 @@
+let allowRep = false;
+
 function getNumberId(a) {
     return 'n' + (a < 10 ? '0' + a : a);
 }
@@ -9,6 +11,10 @@ function apostar(arr) {
     });
 
     angular.element(document.getElementById("colocarnocarrinho")).click();
+
+    return new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+    });
 }
 
 function bet2(item, id) {
@@ -23,54 +29,83 @@ function bet2(item, id) {
 /*
  * Send Progress Bar updates and execute callback
  */
-function pushApostas(v, callback) {
-    let y = v.length;
-
-    let check = setInterval(() => {
-
-        // send the progress bar information
-        let ratio = 1.0 - v.length/y;
-
+async function pushApostas(v, callback) {
+    const y = v.length;
+    const sendReport = (ratio) => {
         document.dispatchEvent(
             new CustomEvent(
                 'chrome_loteca_apostas_progress_bar',
                 {'detail': ratio.toString()}
             )
         );
+    };
 
-        if (v.length) {
-            callback(v.shift());
-        } else {
-            clearInterval(check);
-        }
+    while (v.length) {
+        // send the progress bar information
+        let ratio = 1.0 - v.length/y;
 
-    }, 150);
+        sendReport(ratio);
+
+        await callback(v.shift());
+    }
+
+    sendReport(1);
+    allowRep = false;
+}
+
+/***
+ * Handles the confirm box that shows up when duplicated
+ * games are released on the site
+ */
+angular.element(document.body).scope().$root.$on('modal', function(evt, data) {
+    switch(data.tipo) {
+        case 'confirm-cancel':
+            if (allowRep)
+                clickModalConfirmCancel(true);
+            break;
+        default:
+            console.log("unknown modal data",  data);
+            break;
+    }
+});
+
+/**
+ * Click on the modal confirm box
+ */
+function clickModalConfirmCancel(opt) {
+    if (opt){
+        const confirmBtn = document.querySelector('#confirm-cancel .modal-footer :first-child');
+        setTimeout(() => confirmBtn.click(), 50);
+    } else {
+        const cancelBtn = document.querySelector('#confirm-cancel .modal-footer :last-child');
+        setTimeout(() => cancelBtn.click(), 50);
+    }
 }
 
 /*
  * Receive data from content.js and process
  */
-document.addEventListener('chrome_loteca_apostas', (ev) => {
+document.addEventListener('chrome_loteca_apostas', async (ev) => {
+    allowRep = ev.detail.allowRep ?? allowRep;
 
     switch (ev.detail.type) {
         case 'diadesorte':
         case 'timemania':
-            pushApostas(ev.detail.apostas, (v) => {
+            pushApostas(ev.detail.apostas, async (v) => {
 
                 let line = v.split(',');
                 let item = line[line.length-1];
                 let numbers = line.slice(0,-1);
 
                 bet2(item, ev.detail.type);
-                apostar(numbers);
+                await apostar(numbers);
 
             });
             break;
         default:
-            pushApostas(ev.detail.apostas, (v) => {
-                apostar(v.split(','));
+            pushApostas(ev.detail.apostas, async (v) => {
+                await apostar(v.split(','));
             });
             break;
     }
 });
-

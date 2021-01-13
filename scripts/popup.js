@@ -146,6 +146,7 @@ let btnApostar = document.getElementById("apostar");
 let btnLimpaTbJogos = document.getElementById("limpartbjogos");
 let texAreaElt = document.getElementById("jogostext");
 let betSet = new Set(); //to check repeated bets
+let betArr = []; //data to be sent
 
 //
 // INIT 
@@ -166,9 +167,9 @@ function populate(classSupported) {
         let inBetPage = Object.keys(classSupported).some((v, idx) => {
 
             let caption = classSupported[v].caption ? classSupported[v].caption : ' ';
-            let url = tabs[0].url;
+            let url = new URL(tabs[0].url);
 
-            if (url.endsWith(v) || url.endsWith(caption)) {
+            if (url.hash.includes(v) || url.hash.includes(caption)) {
                 let selectElt = document.getElementById("jogoslist");
                 let opt = document.createElement('option');
 
@@ -304,6 +305,7 @@ btnProcess.onclick = (element) => {
     let textAreaElt = document.getElementById('jogostext');
     let warnInfoElt = document.getElementById('warntext');
     let separator = document.getElementById('tbSeparator');
+    let allowRep = document.getElementById('allowRepetition')?.value === "yes";
 
     let sep = separator.options[separator.selectedIndex].value;
     let arr = textAreaProcess(textAreaElt.value, sep);
@@ -319,7 +321,7 @@ btnProcess.onclick = (element) => {
         let betType = selectElt.selectedOptions[0].value;
         let bet = BetFactory.create(v, betType);
         let betStr = bet.toString();
-        let betStatus = bet.check() | (betSet.has(betStr) << 2);
+        let betStatus = bet.check() | ((betSet.has(betStr) & (!allowRep)) << 2);
 
         let rowInfo = {
             col1: tableElt.childNodes.length+1,
@@ -329,6 +331,7 @@ btnProcess.onclick = (element) => {
         
         if (betStatus === Bet.STATUS_OK) {
             betSet.add(betStr);
+            betArr.push(betStr);
         } else {
             rptText = `Jogo ${rowInfo.col1} Inválido - ${betStr} - `;
 
@@ -355,6 +358,7 @@ btnApostar.onclick = (element) => {
     let progress = document.getElementById("myProgress");
     let textArea = document.getElementById('jogostext');
     let selectElt = document.getElementById('jogoslist');
+    let allowRep = document.getElementById('allowRepetition')?.value === "yes";
 
     if(betSet.size === 0)
         return;
@@ -364,7 +368,8 @@ btnApostar.onclick = (element) => {
         let betType = selectElt.selectedOptions[0].value;
         let message = {
             type: betType,
-            apostas: new Array(...betSet)
+            apostas: betArr,
+            allowRep: allowRep
         };
 
         chrome.tabs.sendMessage(tabs[0].id, message);
