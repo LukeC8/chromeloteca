@@ -1,8 +1,6 @@
 # chromeloteca
 Extensão para fazer várias apostas automaticamente no site das loterias da Caixa
 
-[Extensão na Chrome web store](https://chrome.google.com/webstore/detail/chromeloteca-loterias-cai/iilgghdcnebeichmkinojjkbpcgpdmjp)
-
 Com essa extensão você será capaz de fazer várias apostas no site das loterias da caixa com apenas alguns cliques. É ideal para quem costuma apostar vários jogos de uma única vez ou aposta utilizando desdobramentos e fechamentos.
 
 Como utilizar a extensão?
