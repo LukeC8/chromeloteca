@@ -70,6 +70,47 @@ angular.element(document.body).scope().$root.$on('modal', function(evt, data) {
 });
 
 /**
+ * Click to increase or decrase the game length
+ * @param option: boolean - If true increase the game length otherwise decrease
+ */
+function increaseDecreaseGameLength(option) {
+    const increaseBtn = document.querySelector('#aumentarnumero');
+    const decreaseBtn = document.querySelector('#diminuirnumero');
+    const click = (btnIncrease, resolve) => {
+        if (btnIncrease) {
+            increaseBtn.click();
+        } else {
+            decreaseBtn.click();
+        }
+        setTimeout(resolve, 50);
+    };
+
+    
+    return new Promise(resolve => {
+        setTimeout(click, 50, option, resolve);
+    });
+}
+
+/**
+ * Adjust Game length
+ */
+async function adjustGameLength(gameLength) {
+    const currentGameLength = () => {
+        const gameLengthElement = document.querySelector('.input-mais-menos span');
+
+        return parseInt(gameLengthElement.innerText);
+    };
+
+    while (gameLength < currentGameLength()) {
+        await increaseDecreaseGameLength(false);
+    }
+
+    while (gameLength > currentGameLength()) {
+        await increaseDecreaseGameLength(true);
+    }
+}
+
+/**
  * Click on the modal confirm box
  */
 function clickModalConfirmCancel(opt) {
@@ -98,13 +139,18 @@ document.addEventListener('chrome_loteca_apostas', async (ev) => {
                 let numbers = line.slice(0,-1);
 
                 bet2(item, ev.detail.type);
+
+                await adjustGameLength(numbers.length);
                 await apostar(numbers);
 
             });
             break;
         default:
             pushApostas(ev.detail.apostas, async (v) => {
-                await apostar(v.split(','));
+                const numbers = v.split(',');
+
+                await adjustGameLength(numbers.length);
+                await apostar(numbers);
             });
             break;
     }
